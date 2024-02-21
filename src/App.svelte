@@ -68,8 +68,11 @@
 
 	// DEMO-SPECIFIC CONFIG
 	// Constants
-	const datasets = ["region", "district"];
-	const topojson = "./data/geo_lad2021.json";
+	const datasets = ["region", "departement"];
+	//const topojson = "./data/geo_lad2021.json";
+	//const topojsonFR = "./data/dep2021.json";
+	import topojsonFR from "./plot/dep2021.json";
+
 	const mapstyle = "https://bothness.github.io/ons-basemaps/data/style-omt.json";
 	const mapbounds = {
 		uk: [
@@ -83,18 +86,19 @@
 	};
 
 	// Data
-	let data = {district: {}, region: {}};
-	let metadata = {district: {}, region: {}};
-	let geojson;
+	let data = {departement: {}, region: {}};
+	let metadata = {departement: {}, region: {}};
+	//let geojson;
+	//let geojsonFR;
 
 	// Element bindings
 	let map = null; // Bound to mapbox 'map' instance once initialised
 
 	// State
-	let hovered; // Hovered district (chart or map)
-	let selected; // Selected district (chart or map)
-	$: region = selected && metadata.district.lookup ? metadata.district.lookup[selected].parent : null; // Gets region code for 'selected'
-	let mapHighlighted = []; // Highlighted district (map only)
+	let hovered; // Hovered departement (chart or map)
+	let selected; // Selected departement (chart or map)
+	$: region = selected && metadata.departement.lookup ? metadata.departement.lookup[selected].parent : null; // Gets region code for 'selected'
+	let mapHighlighted = []; // Highlighted departement (map only)
 	let choix = 'tous'; // rKey (radius) for scatter chart
 	let mapKey = "density"; // Key for data to be displayed on map
 	let explore = false; // Allows chart/map interactivity to be toggled on/off
@@ -118,8 +122,8 @@
 		}
 	}
 	function fitById(id) {
-		if (geojson && id) {
-			let feature = geojson.features.find(d => d.properties.AREACD == id);
+		if (geojsonFR && id) {
+			let feature = geojsonFR.features.find(d => d.properties.code == id);
 			let bounds = bbox(feature.geometry);
 			fitBounds(bounds);
 		}
@@ -131,28 +135,28 @@
 			map01: () => { // Action for <section/> with data-id="map01"
 				//fitBounds(mapbounds.uk);
 				fitBounds(mapbounds.fr);
-				mapKey = "density";
+				mapKey = "nb_exp";
 				mapHighlighted = [];
 				explore = false;
 			},
 			map02: () => {
 				//fitBounds(mapbounds.uk);
 				fitBounds(mapbounds.fr);
-				mapKey = "age_med";
+				mapKey = "surf_2022";
 				mapHighlighted = [];
 				explore = false;
 			},
 			map03: () => {
-				let hl = [...data.district.indicators].sort((a, b) => b.age_med - a.age_med)[0];
+				let hl = [...data.departement.indicators].sort((a, b) => b.surf_2022 - a.surf_2022)[0];
 				fitById(hl.code);
-				mapKey = "age_med";
+				mapKey = "surf_2022";
 				mapHighlighted = [hl.code];
 				explore = false;
 			},
 			map04: () => {
 				//fitBounds(mapbounds.uk);
 				fitBounds(mapbounds.fr);
-				mapKey = "age_med";
+				mapKey = "surf_2022";
 				mapHighlighted = [];
 				explore = true;
 			}
@@ -206,7 +210,7 @@
 		.then(arr => {
 			let meta = arr.map(d => ({
 				code: d.code,
-				name: d.name,
+				//name: d.name,
 				parent: d.parent ? d.parent : null
 			}));
 			let lookup = {};
@@ -218,14 +222,15 @@
 
 			let indicators = arr.map((d, i) => ({
 				...meta[i],
-				area: d.area,
-				pop: d['2020'],
+				//area: d.area,
+				surf_2022: d['2022'],
+				surf_2021: d['2021'],
 				density: d.density,
-				age_med: d.age_med
+				nb_exp: d.nb_exp
 			}));
 
-			if (geo == "district") {
-				['density', 'age_med'].forEach(key => {
+			if (geo == "departement") {
+				['nb_exp', 'surf_2022'].forEach(key => {
 					let values = indicators.map(d => d[key]).sort((a, b) => a - b);
 					let breaks = getBreaks(values);
 					indicators.forEach((d, i) => indicators[i][key + '_color'] = getColor(d[key], breaks, colors.seq));
@@ -234,10 +239,9 @@
 			data[geo].indicators = indicators;
 
 			let years = [
-				2001, 2002, 2003, 2004, 2005,
-				2006, 2007, 2008, 2009, 2010,
+				2007, 2008, 2009, 2010,
 				2011, 2012, 2013, 2014, 2015,
-				2016, 2017, 2018, 2019, 2020
+				2016, 2017, 2018, 2019, 2020, 2021, 2022
 			];
 
 			let timeseries = [];
@@ -245,7 +249,7 @@
 				years.forEach(year => {
 					timeseries.push({
 						code: d.code,
-						name: d.name,
+						//name: d.name,
 						value: d[year],
 						year
 					});
@@ -255,11 +259,35 @@
 		});
 	});
 
-	getTopo(topojson, 'geog')
+	/*getTopo(topojsonFR, 'geog')
 	.then(geo => {
-		geo.features.sort((a, b) => a.properties.AREANM.localeCompare(b.properties.AREANM));
-		geojson = geo;
-	});
+		geo.features.sort((a, b) => a.properties.code.localeCompare(b.properties.code));
+		geojsonFR = geo;
+	});*/
+
+	// Fonction pour convertir le JSON en GeoJSON
+	function convertToGeoJSON(jsonData) {
+		console.log(jsonData)
+		if (!jsonData || !jsonData.features || !Array.isArray(jsonData.features)) {
+			console.error('Invalid JSON data. Unable to convert to GeoJSON.');
+			return null; // ou une valeur par défaut appropriée selon votre cas
+		}
+
+		const features = jsonData.features.map(feature => ({
+			type: 'Feature',
+			geometry: feature.geometry,
+			properties: feature.properties // Si des propriétés sont présentes dans le JSON, vous pouvez les ajouter ici
+		}));
+
+		return {
+			type: 'FeatureCollection',
+			features: features
+		};
+	}
+
+
+	// Convertir le JSON en GeoJSON
+	const geojsonFR = convertToGeoJSON(topojsonFR);
 </script>
 
 <ONSHeader filled={true} center={false} />
@@ -436,11 +464,11 @@
 
 
 <Section>
-	<h2>Zones de production des céréales</h2>
-	<p></p>
+	<h2>Le Bio en France</h2>
+	<p>C'était un peu galère de refaire les voronoi du recensement de 1952 alors j'ai choisi de prendre les données du Bio en open data. Voilà ce que cela donne.</p>
 </Section>
 <Divider />
-{#if geojson && data.district.indicators}
+{#if geojsonFR && data.departement.indicators}
 <Scroller {threshold} bind:id={id['map']}>
 	<div slot="background">
 		<figure>
@@ -451,14 +479,14 @@
 					<MapSource
 					  id="lad"
 					  type="geojson"
-					  data={geojson}
-					  promoteId="AREACD"
+					  data={geojsonFR}
+					  promoteId="code"
 					  maxzoom={13}>
 					  <MapLayer
 					  	id="lad-fill"
 							idKey="code"
 							colorKey={mapKey + "_color"}
-					  	data={data.district.indicators}
+					  	data={data.departement.indicators}
 					  	type="fill"
 							select {selected} on:select={doSelect} clickIgnore={!explore}
 							hover {hovered} on:hover={doHover}
@@ -471,7 +499,7 @@
 					  		'fill-opacity': 0.7
 					  	}}>
 								<MapTooltip content={
-									hovered ? `${metadata.district.lookup[hovered].name}<br/><strong>${data.district.indicators.find(d => d.code == hovered)[mapKey].toLocaleString()} ${units[mapKey]}</strong>` : ''
+									hovered ? `${metadata.departement.lookup[hovered].code}<br/><strong>${data.departement.indicators.find(d => d.code == hovered)[mapKey].toLocaleString()} ${units[mapKey]}</strong>` : ''
 								}/>
 							</MapLayer>
 						<MapLayer

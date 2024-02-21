@@ -7,7 +7,7 @@
 
 <footer style="color: {themes[theme]['text']}; background-color: {themes[theme]['pale']};">
 	<div class="col-wide" data-analytics="footer">
-		<a href="https://www.ons.gov.uk/">
+		<a href="https://www.agriculture.gouv.fr/">
 			{#if theme == 'dark'}
 			<img
 				class="logo-img"
@@ -21,8 +21,8 @@
 			{/if}
 		</a>
 		<ul>
-			<li><a href="https://www.ons.gov.uk/aboutus/contactus" class="link" style="color: {themes[theme]['text']}">Nous contacter</a></li>
-			<li><a href="https://www.ons.gov.uk/help/privacynotice" class="link" style="color: {themes[theme]['text']}">Cookies et confidentialité</a></li>
+			<li><a href="" class="link" style="color: {themes[theme]['text']}">Nous contacter</a></li>
+			<li><a href="" class="link" style="color: {themes[theme]['text']}">Cookies et confidentialité</a></li>
 		</ul>
 		<hr style="border-top-color: {themes[theme]['muted']}" />
 		<div class="license">

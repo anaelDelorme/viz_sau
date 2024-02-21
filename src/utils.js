@@ -21,7 +21,7 @@ export async function getData(url) {
   return data;
 }
 
-export async function getTopo(url, layer) {
+export async function getTopo(url) {
   let response = await fetch(url);
   let json = await response.json();
   let geojson = await feature(json, layer);
