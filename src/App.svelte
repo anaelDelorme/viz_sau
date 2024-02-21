@@ -1,6 +1,7 @@
 <script>
 	// CORE IMPORTS
 	import { setContext, onMount } from "svelte";
+	
 	import { getMotion } from "./utils.js";
 	import { themes } from "./config.js";
 	import ONSHeader from "./layout/ONSHeader.svelte";
@@ -15,7 +16,33 @@
 	import Arrow from "./ui/Arrow.svelte";
 	import Em from "./ui/Em.svelte";
 
+	
+	import Treemap from "./plot/treemap.svelte";
+	import treemap_data from "./plot/treemap.json"
+
+	import Bubblechart from "./plot/bubblechart.svelte";
+	import bubble_data_init from './plot/bubble_data.json';
+	import bubble_data_froment from './plot/bubble_data_froment.json';
+	import bubble_data_avoine from './plot/bubble_data_avoine.json';
+	import bubble_data_mais from './plot/bubble_data_maïs.json';
+	import bubble_data_orge_meteil from './plot/bubble_data_orge_meteil.json';
+	import bubble_data_seigle from './plot/bubble_data_seigle.json';
+	import bubble_data_sarrasin from './plot/bubble_data_sarrasin.json';
+	function getRightWord(id) {
+		if (typeof id !== 'string') {
+        return ''; // ou retournez une valeur par défaut appropriée
+    }
+
+    const words = id.split('.');
+    return words[1]; // Le mot de droite
+	}
+	const bubble_data_init_barchart = bubble_data_init.map(item => ({
+		...item,
+		id: getRightWord(item.id),
+		}));
+
 	// DEMO-SPECIFIC IMPORTS
+	
 	import bbox from "@turf/bbox";
 	import { getData, setColors, getTopo, getBreaks, getColor } from "./utils.js";
 	import { colors, units } from "./config.js";
@@ -48,7 +75,11 @@
 		uk: [
 			[-9, 49 ],
 			[ 2, 61 ]
-		]
+		],
+		fr: [
+			[-5.1, 51.1 ], 
+			[9.6, 41.3 ]  
+		] 
 	};
 
 	// Data
@@ -63,17 +94,13 @@
 	let hovered; // Hovered district (chart or map)
 	let selected; // Selected district (chart or map)
 	$: region = selected && metadata.district.lookup ? metadata.district.lookup[selected].parent : null; // Gets region code for 'selected'
-	$: chartHighlighted = metadata.district.array && region ? metadata.district.array.filter(d => d.parent == region).map(d => d.code) : []; // Array of district codes in 'region'
 	let mapHighlighted = []; // Highlighted district (map only)
-	let xKey = "area"; // xKey for scatter chart
-	let yKey = null; // yKey for scatter chart
-	let zKey = null; // zKey (color) for scatter chart
-	let rKey = null; // rKey (radius) for scatter chart
+	let choix = 'tous'; // rKey (radius) for scatter chart
 	let mapKey = "density"; // Key for data to be displayed on map
 	let explore = false; // Allows chart/map interactivity to be toggled on/off
 
 	// FUNCTIONS (INCL. SCROLLER ACTIONS)
-
+	
 	// Functions for chart and map on:select and on:hover events
 	function doSelect(e) {
 		console.log(e);
@@ -102,13 +129,15 @@
 	const actions = {
 		map: { // Actions for <Scroller/> with id="map"
 			map01: () => { // Action for <section/> with data-id="map01"
-				fitBounds(mapbounds.uk);
+				//fitBounds(mapbounds.uk);
+				fitBounds(mapbounds.fr);
 				mapKey = "density";
 				mapHighlighted = [];
 				explore = false;
 			},
 			map02: () => {
-				fitBounds(mapbounds.uk);
+				//fitBounds(mapbounds.uk);
+				fitBounds(mapbounds.fr);
 				mapKey = "age_med";
 				mapHighlighted = [];
 				explore = false;
@@ -121,57 +150,49 @@
 				explore = false;
 			},
 			map04: () => {
-				fitBounds(mapbounds.uk);
+				//fitBounds(mapbounds.uk);
+				fitBounds(mapbounds.fr);
 				mapKey = "age_med";
 				mapHighlighted = [];
 				explore = true;
 			}
 		},
 		chart: {
+			chart00: () => {
+				choix = "tous";
+			},
 			chart01: () => {
-				xKey = "area";
-				yKey = null;
-				zKey = null;
-				rKey = null;
-				explore = false;
+				choix = "Froment";
 			},
 			chart02: () => {
-				xKey = "area";
-				yKey = null;
-				zKey = null;
-				rKey = "pop";
-				explore = false;
+				choix = "Avoine";
 			},
 			chart03: () => {
-				xKey = "area";
-				yKey = "density";
-				zKey = null;
-				rKey = "pop";
-				explore = false;
+				choix = "Seigle";
 			},
 			chart04: () => {
-				xKey = "area";
-				yKey = "density";
-				zKey = "parent_name";
-				rKey = "pop";
-				explore = false;
+				choix = "Orge, Méteil";
 			},
 			chart05: () => {
-				xKey = "area";
-				yKey = "density";
-				zKey = null;
-				rKey = "pop";
-				explore = true;
+				choix = "Sarrasin";
+			},
+			chart06: () => {
+				choix = "Maïs";
+			},
+			chart07:() =>{
+				choix = "Barchart"
 			}
 		}
 	};
 
 	// Code to run Scroller actions when new caption IDs come into view
 	function runActions(codes = []) {
+		
 		codes.forEach(code => {
 			if (id[code] != idPrev[code]) {
 				if (actions[code][id[code]]) {
 					actions[code][id[code]]();
+					
 				}
 				idPrev[code] = id[code];
 			}
@@ -244,12 +265,21 @@
 <ONSHeader filled={true} center={false} />
 
 <Header bgcolor="#206095" bgfixed={true} theme="dark" center={false} short={true}>
-	<h1>This is the title of the article</h1>
+	<h1>Le recensement agricole de 1852</h1>
 	<p class="text-big" style="margin-top: 5px">
-		This is a short text description of the article that might take up a couple of lines
+		En 1852, la France est majoritairement rurale et agricole. L'exode rural et la densification urbaine viennent à peine de démarrer.  
+		Les disparités régionales sont importantes : "polyculture traditionnelle dans les régions de l'ouest, culture céréalière (plaines du Bassin parisien) ou encore culture du vignoble (Bordeaux, Bourgogne, Champagne)" <br/>
+		<i>Source : 
+			<a
+				href="https://www.lelivrescolaire.fr/page/6643121"
+				class="link"
+				target="_blank"
+				rel="noopener"
+				style="color: white">https://www.lelivrescolaire.fr/page/6643121</a>
+
 	</p>
 	<p style="margin-top: 20px">
-		DD MMM YYYY
+		20 février 2024
 	</p>
 	<p>
 		<Toggle label="Animation {animation ? 'on' : 'off'}" mono={true} bind:checked={animation}/>
@@ -259,169 +289,144 @@
 	</div>
 </Header>
 
-<Filler theme="lightblue" short={true} wide={true} center={false}>
-	<p class="text-big">
-		This is a large, left-aligned text caption
-	</p>
-</Filler>
+
+<Media col="full" caption="Rosa Bonheur - Labourage nivernais">
+	<div class="media" style="width: 100%;"><img src="img/Rosa_Bonheur_-_Labourage_nivernais.jpg" alt="Rosa Bonheur - Labourage nivernais"></div>
+</Media>
 
 <Section>
-	<h2>This is a section title</h2>
+	<h2>Répartition des surfaces agricoles par espèce cultivée en 1852</h2>
 	<p>
-		This is a short paragraph of text to demonstrate the standard "medium" column width, font size and line spacing of the template.
+		Les surfaces agricoles étaient majoritairement des fourrages et céréales. 
 	</p>
 	<p>
-		This is a second short paragraph of text to demonstrate the size of the paragraph spacing in the template.
+		Parmi les céréales, c’est le froment qui est majoritaire avec deux fois plus de surface que le froment et trois fois plus que le seigle. 
 	</p>
-	<blockquote class="text-indent">
-		"This is an example of a large embedded quotation."&mdash;A. Person
-	</blockquote>
+	<p>	
+	Les cultures arborescentes sont dominées par la vigne, et les châtaignerais. 
+	</p>
+	<p>Parmi les cultures diverses, la culture de pommes de terre domine, suivie des légumes secs.
+	</p>
+
 </Section>
+<!--
+<Media col="full" caption="Répartition des surfaces agricoles par espèce cultivée en 1852">
+	<div class="media" style="width: 100%;">
+		<img src="img/legende_treemap.png" alt="Légende du treemap" style="max-width: 25%; display: block; margin: 0 auto;">
+		<iframe width="80%" height="585" frameborder="0" title="Répartition des surfaces agricoles par espèce cultivée en 1852"
+  src="https://observablehq.com/embed/@francoissemecurbe/le-recensement-agricole-de-1852?cells=chart" style="margin-left: auto; margin-right: auto;"></iframe>
+	</div>
+</Media>
+-->
 
 <Divider/>
 
-<Section>
-	<h2>Embedded charts or media</h2>
-	<p>
-		Below is an embedded chart. It is set to the same width as the column, "medium" (680px), but could also be "narrow" (540px), "wide" (980px) or "full" width. All options are responsive to fit the width of narrow screens.
-	</p>
-</Section>
-
-{#if data.region.indicators}
-<Media
-	col="medium"
-	caption="Source: ONS mid-year population estimates."
->
-	<div class="chart-sml">
-		<BarChart
-			data={[...data.region.indicators].sort((a, b) => a.pop - b.pop)}
-			xKey="pop" yKey="name"
-			snapTicks={false}
-			xFormatTick={d => (d / 1e6)} xSuffix="m"
-			height={350} padding={{top: 0, bottom: 15, left: 140, right: 0}}
-			area={false} title="Population by region/nation, 2020"/>
-	</div>
+<Media caption="Répartition des surfaces agricoles par espèce cultivée en 1852" col="wide">
+		<Treemap treemap_data={treemap_data} />
 </Media>
-{/if}
+
 
 <Divider/>
 
-<Section>
-	<h2>Gridded charts or media</h2>
-	<p>
-		Below is a grid that can contain charts or any other kind of visual media. The grid can fit in a medium, wide or full-width column, and the media width itself can be narrow (min 200px), medium (min 300px), wide (min 500px) or full-width. The grid is responsive, and will re-flow on smaller screens.
-	</p>
-</Section>
-
-{#if data.region.timeseries && data.region.indicators}
-<Media
-	col="wide"
-	grid="narrow" gap={20}
-	caption="Source: ONS mid-year population estimates."
->
-	{#each [...data.region.indicators].sort((a, b) => b.pop - a.pop) as region}
-	<div class="chart-sml">
-		<LineChart
-			data={data.region.timeseries}
-			xKey="year" yKey="value" zKey="code"
-			color="lightgrey"
-			lineWidth={1} xTicks={2} snapTicks={false}
-			yFormatTick={d => (d / 1e6)} ySuffix="m"
-			height={200} padding={{top: 0, bottom: 20, left: 30, right: 15}}
-			selected={region.code}
-			area={false} title={region.name}/>
-	</div>
-	{/each}
-</Media>
-{/if}
-
-<Divider />
 
 <Section>
-	<h2>This is a dynamic chart section</h2>
-	<p>
-		The chart below will respond to the captions as you scroll down. The "Scroller" component is
-		set to "splitscreen" mode, which means the captions will be on the left side on larger screens.
-	</p>
-	<p>
-		The interactions are via Javascript functions that are called when each caption scrolls into view.
-	</p>
+	<h2>Une production de froment qui domine</h2>
 </Section>
+
 
 <Scroller {threshold} bind:id={id['chart']} splitscreen={true}>
 	<div slot="background">
 		<figure>
 			<div class="col-wide height-full">
-				{#if data.district.indicators && metadata.region.lookup}
 					<div class="chart">
-						<ScatterChart
-							height="calc(100vh - 150px)"
-							data={data.district.indicators.map(d => ({...d, parent_name: metadata.region.lookup[d.parent].name}))}
-							colors={explore ? ['lightgrey'] : colors.cat}
-							{xKey} {yKey} {zKey} {rKey} idKey="code" labelKey="name"
-							r={[3,10]}
-							xScale="log"
-							xTicks={[10, 100, 1000, 10000]} xFormatTick={d => d.toLocaleString()}
-							xSuffix=" sq.km"
-							yFormatTick={d => d.toLocaleString()}
-							legend={zKey != null} labels
-							select={explore} selected={explore ? selected : null} on:select={doSelect}
-							hover {hovered} on:hover={doHover}
-							highlighted={explore ? chartHighlighted : []}
-							colorSelect="#206095" colorHighlight="#999" overlayFill
-							{animation}/>
+						
+						{#if choix === 'tous'}
+                        	<Bubblechart bubble_data={bubble_data_init} />
+						{:else if choix === 'Froment'}
+                        	<Bubblechart bubble_data={bubble_data_froment} />
+						{:else if choix === 'Avoine'}
+                        	<Bubblechart bubble_data={bubble_data_avoine} />
+						{:else if choix === 'Orge, Méteil'}
+                        	<Bubblechart bubble_data={bubble_data_orge_meteil} />
+						{:else if choix === 'Sarrasin'}
+                        	<Bubblechart bubble_data={bubble_data_sarrasin} />
+						{:else if choix === 'Seigle'}
+                        	<Bubblechart bubble_data={bubble_data_seigle} />
+						{:else if choix === 'Maïs'}
+                        	<Bubblechart bubble_data={bubble_data_mais} />
+						{:else if choix === 'Barchart'}
+							<BarChart
+								data={bubble_data_init_barchart}
+								xKey="value" 
+								yKey="id"
+								barHeight=80
+								title="Production de céréales en 1852, en quintaux métriques" />
+
+
+						{:else}
+							<Bubblechart bubble_data={bubble_data_init} />
+                    	{/if}
 					</div>
-				{/if}
 			</div>
 		</figure>
 	</div>
 
 	<div slot="foreground">
+		<section data-id="chart00">
+			<div class="col-medium">
+				<p>
+					Voici les principales céréales cultivées en 1852, en quintaux métriques.
+				</p>
+			</div>
+		</section>
 		<section data-id="chart01">
 			<div class="col-medium">
 				<p>
-					This chart shows the <strong>area in square kilometres</strong> of each local authority district in the UK. Each circle represents one district. The scale is logarithmic.
+					Le <Em color={"#5f86af"}>froment</Em> est la céréale la plus produite. Avec du froment, on produit de la farine pour faire du pain, des pâtes et divers produits de boulangerie. En 1852 la production s’élève à 92,2 millions de quintaux métriques.
 				</p>
 			</div>
 		</section>
 		<section data-id="chart02">
 			<div class="col-medium">
 				<p>
-					The radius of each circle shows the <strong>total population</strong> of the district.
+					L’<Em color={"#f39941"}>avoine</Em> est la deuxième céréale produite avec 39.5 millions de quintaux. L'avoine était utilisée principalement comme aliment pour le bétail, en particulier pour les chevaux, mais elle était également consommée par les humains sous forme de gruau ou de bouillie.
 				</p>
 			</div>
 		</section>
 		<section data-id="chart03">
 			<div class="col-medium">
 				<p>
-					The vertical axis shows the <strong>density</strong> of the district in people per hectare.
+					Juste derrière arrive le <Em color={"#f39941"}>seigle</Em>, utilisée essentiellement pour le pain.
 				</p>
 			</div>
 		</section>
 		<section data-id="chart04">
 			<div class="col-medium">
 				<p>
-					The colour of each circle shows the <strong>part of the country</strong> that the district is within.
+					L’<Em color={"#f39941"}>orge</Em>  et le <Em color={"#f39941"}>méteil</Em> ont une production similaire. L'orge était utilisée pour la production de bière et pour l'alimentation animale. Le méteil était utilisé pour l’alimentation animale.
 				</p>
 			</div>
 		</section>
 		<section data-id="chart05">
 			<div class="col-medium">
-				<h3>Select a district</h3>
-				<p>Use the selection box below or click on the chart to select a district. The chart will also highlight the other districts in the same part of the country.</p>
-				{#if geojson}
-					<p>
-						<!-- svelte-ignore a11y-no-onchange -->
-						<select bind:value={selected}>
-							<option value={null}>Select one</option>
-							{#each geojson.features as place}
-								<option value={place.properties.AREACD}>
-									{place.properties.AREANM}
-								</option>
-							{/each}
-						</select>
-					</p>
-				{/if}
+				<p>
+				  Le <Em color={"#f39941"}>sarrasin</Em> était utilisé pour la fabrication de galettes et de crêpes, ainsi que pour la nourriture des animaux.
+
+				</p>
+			</div>
+		</section>
+		<section data-id="chart06">
+			<div class="col-medium">
+				<p>
+					A noter, la très faible production de <Em color={"#f39941"}>maïs</Em>.			
+				</p>
+			</div>
+		</section>
+		<section data-id="chart07">
+			<div class="col-medium">
+				<p>
+					Et voilà ce que cela donne quand on change de type de graphique.	
+				</p>
 			</div>
 		</section>
 	</div>
@@ -429,55 +434,20 @@
 
 <Divider />
 
+
 <Section>
-	<h2>This is a full-width chart demo</h2>
-	<p>
-		Below is an example of a media grid where the column with is set to "full". This allows for full width images and charts.
-	</p>
-	<p>
-
-	</p>
+	<h2>Zones de production des céréales</h2>
+	<p></p>
 </Section>
-
-<Media
-	col="full"
-	height={600}
-	caption='This is an optional caption for the above chart or media. It can contain HTML code and <a href="#">hyperlinks</a>, and wrap onto multiple lines.'
->
-	<div class="chart-full">
-		{#if data.district.timeseries}
-		<LineChart
-			data={data.district.timeseries}
-			padding={{left: 50, right: 150, top: 0, bottom: 0}}
-			height="500px"
-			xKey="year" yKey="value" zKey="code"
-			color="lightgrey" lineWidth={1}
-			yFormatTick={d => (d/1e6).toFixed(1)} ySuffix="m"
-			select {selected} on:select={doSelect}
-			hover {hovered} on:hover={doHover}
-			highlighted={chartHighlighted}
-			colorSelect="#206095" colorHighlight="#999"
-			area={false} title="Mid-year population by district, 2001 to 2020"
-			labels labelKey="name"/>
-		{/if}
-	</div>
-</Media>
-
 <Divider />
-
-<Section>
-	<h2>This is a dynamic map section</h2>
-	<p class="mb">
-		The map below will respond to the captions as you scroll down. The scroller is not set to splitscreen, so captions are placed over the map on any screen size.
-	</p>
-</Section>
-
 {#if geojson && data.district.indicators}
 <Scroller {threshold} bind:id={id['map']}>
 	<div slot="background">
 		<figure>
 			<div class="col-full height-full">
-				<Map style={mapstyle} bind:map interactive={false} location={{bounds: mapbounds.uk}}>
+				<!--<Map style={mapstyle} bind:map interactive={false} location={{bounds: mapbounds.uk}}>-->
+					<Map style={mapstyle} bind:map interactive={false} location={{bounds: mapbounds.fr}}>
+
 					<MapSource
 					  id="lad"
 					  type="geojson"
@@ -527,44 +497,29 @@
 		<section data-id="map01">
 			<div class="col-medium">
 				<p>
-					This map shows <strong>population density</strong> by district. Districts are coloured from <Em color={colors.seq[0]}>least dense</Em> to <Em color={colors.seq[4]}>most dense</Em>. You can hover to see the district name and density.
+					Le <Em color={colors.seq[0]}>froment</Em> est produit sur tout le territoire française, mais en moins grande quantité dans le Massif central, les Landes et la Bretagne.
 				</p>
 			</div>
 		</section>
 		<section data-id="map02">
 			<div class="col-medium">
 				<p>
-					The map now shows <strong>median age</strong>, from <Em color={colors.seq[0]}>youngest</Em> to <Em color={colors.seq[4]}>oldest</Em>.
-				</p>
+					Les régions qui ont une faible production de froment compense par une importante production de <Em color={colors.seq[0]}>seigle</Em>.</p>
 			</div>
 		</section>
 		<section data-id="map03">
 			<div class="col-medium">
-				<!-- This gets the data object for the district with the oldest median age -->
-				{#each [[...data.district.indicators].sort((a, b) => b.age_med - a.age_med)[0]] as district}
-				<p>
-					The map is now zoomed on <Em color={district.age_med_color}>{district.name}</Em>, the district with the oldest median age, {district.age_med} years.
-				</p>
-				{/each}
+				L’<Em color={colors.seq[0]}>avoine</Em> est une spécialité de la moitié Nord de la France.
 			</div>
 		</section>
 		<section data-id="map04">
 			<div class="col-medium">
-				<h3>Select a district</h3>
-				<p>Use the selection box below or click on the map to select and zoom to a district.</p>
-				{#if geojson}
-					<p>
-						<!-- svelte-ignore a11y-no-onchange -->
-						<select bind:value={selected} on:change={() => fitById(selected)}>
-							<option value={null}>Select one</option>
-							{#each geojson.features as place}
-								<option value={place.properties.AREACD}>
-									{place.properties.AREANM}
-								</option>
-							{/each}
-						</select>
-					</p>
-				{/if}
+				La <strong>Bretagne</strong> est la principale zone de production de <Em color={colors.seq[0]}>sarrasin</Em>, probablement pour les traditionnelles crèpes.
+			</div>
+		</section>
+		<section data-id="map05">
+			<div class="col-medium">
+				Le <Em color={colors.seq[0]}>maïs</Em> est déjà une spécialité du <strong>quart Sud-Ouest de la France Bretagne.</strong>
 			</div>
 		</section>
 	</div>
@@ -573,12 +528,6 @@
 
 <Divider />
 
-<Section>
-	<h2>How to use this template</h2>
-	<p>
-		You can find the source code and documentation on how to use this template in <a href="https://github.com/ONSvisual/svelte-scrolly/" target="_blank">this Github repo</a>.
-	</p>
-</Section>
 
 <ONSFooter />
 
@@ -605,7 +554,7 @@
 	}
 	/* The properties below make the media DIVs grey, for visual purposes in demo */
 	.media {
-		background-color: #f0f0f0;
+		background-color: #fff;
 		display: -webkit-box;
 		display: -ms-flexbox;
 		display: flex;

@@ -1,0 +1,142 @@
+{
+    "name": "Surfaces agricoles",
+    "children": [
+        
+        {
+            "name": "Fourrages",
+            "children": [
+                        {
+                            "name": "Prairies naturelles",
+                            "value": 5057232
+                        },
+                        {
+                            "name": "Prairies artificielles (luzerne, sainfoin, trèfle, mélanges divers)",
+                            "value": 2563490
+                        },
+                        {
+                            "name": "Pâturages et pacages (prés non fauchables, landes, bruyères, pâtis)",
+                            "value": 6579983
+                        },
+                        {
+                            "name": "Jachères",
+                            "value": 5705217
+                        }
+                    ]
+        },
+        {
+            "name": "Cérales",
+            "children": [
+                        {
+                            "name": "Froment",
+                            "value": 6984772
+                        },
+                        {
+                            "name": "Méteil",
+                            "value": 572983
+                        },
+                        {
+                            "name": "Seigle",
+                            "value": 2193230
+                        },
+                        {
+                            "name": "Orge",
+                            "value": 1040831
+                        },
+                        {
+                            "name": "Avoine",
+                            "value": 3262605
+                        },
+                        {
+                            "name": "Maïs",
+                            "value": 601997
+                        },
+                        {
+                            "name": "Sarrasin",
+                            "value": 709128
+                        }
+                    ]
+        },
+        {
+            "name": "Cultures arborescentes",
+            "children": [
+                        {
+                            "name": "Vignes",
+                            "value": 2191109
+                        },
+                        {
+                            "name": "Vergers",
+                            "value": 208547
+                        },
+                        {
+                            "name": "Olivettes",
+                            "value": 94117
+                        },
+                        {
+                            "name": "Mûriers",
+                            "value": 30972
+                        },
+                        {
+                            "name": "Châtaigneraies",
+                            "value": 578224
+                        },
+                        {
+                            "name": "Noyers",
+                            "value": 6268
+                        },
+                        {
+                            "name": "Autres arbres",
+                            "value": 84390
+                        }
+                    ]
+        },
+        {
+            "name": "Cultures diverses",
+            "children": [
+                        {
+                            "name": "Pommes de terre",
+                            "value": 829297
+                        },
+                        {
+                            "name": "Betteraves",
+                            "value": 111360
+                        },
+                        {
+                            "name": "Racines et légumes divers",
+                            "value": 249043
+                        },
+                        {
+                            "name": "Légumes secs (haricots, pois, vesces, lentilles, etc.)",
+                            "value": 456612
+                        },
+                        {
+                            "name": "Graines oléagineuses (colza, navette, oeillette)",
+                            "value": 250019
+                        },
+                        {
+                            "name": "Chanvre",
+                            "value": 125357
+                        },
+                        {
+                            "name": "Lin",
+                            "value": 80336
+                        },
+                        {
+                            "name": "Houblon",
+                            "value": 8775
+                        },
+                        {
+                            "name": "Parcs et jardins d'agréments",
+                            "value": 65197
+                        },
+                        {
+                            "name": "Jardins et potagers",
+                            "value": 265417
+                        },
+                        {
+                            "name": "Autres cultures labourables",
+                            "value": 94056
+                        }
+                    ]
+        }
+    ]
+}

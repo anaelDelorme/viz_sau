@@ -4,6 +4,7 @@ import commonjs from '@rollup/plugin-commonjs';
 import livereload from 'rollup-plugin-livereload';
 import { terser } from 'rollup-plugin-terser';
 import babel from 'rollup-plugin-babel';
+import json from '@rollup/plugin-json';
 
 const production = !process.env.ROLLUP_WATCH;
 
@@ -52,7 +53,7 @@ export default [
 				dedupe: ['svelte']
 			}),
 			commonjs(),
-
+			json(),
 			// In dev mode, call `npm run start` once
 			// the bundle has been generated
 			!production && serve(),
@@ -89,7 +90,7 @@ export default [
 				dedupe: ['svelte']
 			}),
 			commonjs(),
-
+			json(),
 			// compile to ES 2015 in oder to support IE11 & Chromium 59+
 			babel({
 				extensions: ['.js', '.mjs', '.html', '.svelte'],

@@ -9,14 +9,14 @@
 
 <nav style="border-bottom-color: {themes[theme]['muted']}; {filled ? 'background-color: ' +  themes[theme]['background'] + ';' : ''}">
   <div class="col-wide middle" class:center>
-		<a href="https://www.ons.gov.uk/">
+		<a href="https://www.agriculture.gouv.fr/">
 			<picture>
 				{#if theme == 'dark'}
-				<img src="./img/ons-logo-neg-en.svg" alt="Office for National Statistics">
+				<img src="./img/Logo_du_MAA.png" alt="Ministère de l'Agriculture et de la Souveraineté Alimentaire" style="width: 20%; height: auto;">
 				{:else if filled == true}
-				<img src="./img/ons-logo-pos-en.svg" alt="Office for National Statistics">
+				<img src="./img/Logo_du_MAA.png" alt="Ministère de l'Agriculture et de la Souveraineté Alimentaire" style="width: 20%; height: auto;">
 				{:else}
-				<img src="./img/ons-logo-black-en.svg" alt="Office for National Statistics">
+				<img src="./img/Logo_du_MAA.png" alt="Ministère de l'Agriculture et de la Souveraineté Alimentaire" style="width: 20%; height: auto;">
 				{/if}
 			</picture>
 		</a>
@@ -28,7 +28,7 @@
 		-webkit-box-sizing: border-box;
 		box-sizing: border-box;
 		position: relative;
-		height: 46px;
+		height: 146px;
 		margin-bottom: -46px;
 		border-bottom: 1px solid #777;
 		z-index: 1;

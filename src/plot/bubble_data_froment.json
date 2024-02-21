@@ -1,0 +1,31 @@
+
+  [
+    {
+      "id": "cat1.Froment",
+      "value": 95262497
+    },
+    {
+      "id": "cat0.Méteil",
+      "value": 12322111
+    },
+    {
+      "id": "cat0.Seigle",
+      "value": 36104043
+    },
+    {
+      "id": "cat0.Orge",
+      "value": 12119967
+    },
+    {
+      "id": "cat0.Avoine",
+      "value": 39465900
+    },
+    {
+      "id": "cat0.Maïs",
+      "value": 4665688
+    },
+    {
+      "id": "cat0.Sarrasin",
+      "value": 8132801
+    }
+  ]
