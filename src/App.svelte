@@ -1,7 +1,7 @@
 <script>
 	// CORE IMPORTS
 	import { setContext, onMount } from "svelte";
-	
+	import { tooltip } from "@svelte-plugins/tooltips";
 	import { getMotion } from "./utils.js";
 	import { themes } from "./config.js";
 	import ONSHeader from "./layout/ONSHeader.svelte";
@@ -295,47 +295,35 @@
 <Header bgcolor="#206095" bgfixed={true} theme="dark" center={false} short={true}>
 	<h1>La superficie agricole utilisée</h1>
 	<p class="text-big" style="margin-top: 5px">
-		En 2020, l’agriculture occupe 269 000 km2 de l’espace français. En métropole⁠?, cela représente <Em color={"#ffe552"}> 49 % du territoire</Em>.
 
-		Alors qu'elle diminue régulièrement depuis 50 ans, la superficie agricole utilisée⁠? varie peu entre 2010 et 2020 (-1 %).			
+		
+		En 2020, l’agriculture occupe 269 000 km2 de l’espace français. En <u title="En Guyane, dont la superficie est le sixième de la métropole, l'agriculture n'utilise que 0,4 % du territoire." use:tooltip={{ theme: 'custom-tooltip' }}>métropole</u>, cela représente <Em color={"#ffe552"}> 49 % du territoire</Em>.
+
+		Alors qu'elle <b>diminue régulièrement depuis 50 ans</b>, la <u title="La SAU comprend les terres arables (y compris pâturages temporaires, jachères, cultures sous abri, jardins familiaux...), les surfaces toujours en herbe et les cultures permanentes (vignes, vergers...)." use:tooltip={{ theme: 'custom-tooltip' }}>superficie agricole utilisée</u> varie peu entre 2010 et 2020 (-1 %).			
 
 	</p>
 	<p style="margin-top: 20px">
 		20 février 2024
 	</p>
 	<p>
-		<Toggle label="Animation {animation ? 'on' : 'off'}" mono={true} bind:checked={animation}/>
+		<Toggle label="Animation {animation ? 'activée' : 'désactivée'}" mono={true} bind:checked={animation}/>
 	</p>
 	<div style="margin-top: 90px;">
-		<Arrow color="white" {animation}>Scroll to begin</Arrow>
+		<Arrow color="white" {animation}>Faites défiler pour lire la viz.</Arrow>
 	</div>
 </Header>
 
 
-<Media col="full" caption="Rosa Bonheur - Labourage nivernais">
-	<div class="media" style="width: 100%;"><img src="img/Rosa_Bonheur_-_Labourage_nivernais.jpg" alt="Rosa Bonheur - Labourage nivernais"></div>
-</Media>
-
 <Section>
-	<h2>Répartition des surfaces agricoles par espèce cultivée en 1852</h2>
 	<p>
-		Les surfaces agricoles étaient majoritairement des fourrages et céréales. 
+		L'agriculture occupe près de la moitié de l'espace en métropole, part qui se stabilise
 	</p>
-	<p>
-		Parmi les céréales, c’est le froment qui est majoritaire avec deux fois plus de surface que le froment et trois fois plus que le seigle. 
-	</p>
-	<p>	
-	Les cultures arborescentes sont dominées par la vigne, et les châtaignerais. 
-	</p>
-	<p>Parmi les cultures diverses, la culture de pommes de terre domine, suivie des légumes secs.
-	</p>
+	
 
 </Section>
 
 
-<Divider/>
-
-<Media caption="Répartition des surfaces agricoles par espèce cultivée en 1852 !" col="wide">
+<Media caption="Part des terres agricoles en métropole, en %" col="wide">
 		<Treemap treemap_data={treemap_data} />
 </Media>
 
@@ -582,4 +570,11 @@
 		text-align: center;
 		color: #aaa;
 	}
+
+	:global(.tooltip.custom-tooltip) {
+		--tooltip-background-color: #ffe552;
+		--tooltip-box-shadow: 0 1px 8px white;
+		--tooltip-color: black;
+		--tooltip-font-size: 16px;
+	  }
 </style>

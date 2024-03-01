@@ -21,6 +21,7 @@
     "@rollup/plugin-commonjs": "^14.0.0",
     "@rollup/plugin-json": "^6.1.0",
     "@rollup/plugin-node-resolve": "^8.0.0",
+    "@svelte-plugins/tooltips": "^3.0.0",
     "@turf/bbox": "^6.5.0",
     "core-js": "3",
     "d3-dsv": "latest",
