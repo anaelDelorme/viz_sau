@@ -293,17 +293,11 @@
 <ONSHeader filled={true} center={false} />
 
 <Header bgcolor="#206095" bgfixed={true} theme="dark" center={false} short={true}>
-	<h1>Le recensement agricole de 1852</h1>
+	<h1>La superficie agricole utilisée</h1>
 	<p class="text-big" style="margin-top: 5px">
-		En 1852, la France est rurale et agricole. L'exode rural et la densification urbaine viennent à peine de démarrer.  
-		Les disparités régionales sont importantes : "polyculture traditionnelle dans les régions de l'ouest, culture céréalière (plaines du Bassin parisien) ou encore culture du vignoble (Bordeaux, Bourgogne, Champagne)" <br/>
-		<i>Source : 
-			<a
-				href="https://www.lelivrescolaire.fr/page/6643121"
-				class="link"
-				target="_blank"
-				rel="noopener"
-				style="color: white">https://www.lelivrescolaire.fr/page/6643121</a>
+		En 2020, l’agriculture occupe 269 000 km2 de l’espace français. En métropole⁠?, cela représente <Em color={"#ffe552"}> 49 % du territoire</Em>.
+
+		Alors qu'elle diminue régulièrement depuis 50 ans, la superficie agricole utilisée⁠? varie peu entre 2010 et 2020 (-1 %).			
 
 	</p>
 	<p style="margin-top: 20px">
