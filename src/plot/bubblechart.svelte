@@ -18,7 +18,6 @@
   
     //update link to the desired address path or remove.
     const link = (d) => ``;
-  
     // Compute the values.
     const dVals = bubble_data.map((el) => el);
     const vVals = bubble_data.map((el) => el.value);

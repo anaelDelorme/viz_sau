@@ -100,7 +100,7 @@
 	$: region = selected && metadata.departement.lookup ? metadata.departement.lookup[selected].parent : null; // Gets region code for 'selected'
 	let mapHighlighted = []; // Highlighted departement (map only)
 	let choix = 'tous'; // rKey (radius) for scatter chart
-	let mapKey = "density"; // Key for data to be displayed on map
+	let mapKey = "nb_exp"; // Key for data to be displayed on map
 	let explore = false; // Allows chart/map interactivity to be toggled on/off
 
 	// FUNCTIONS (INCL. SCROLLER ACTIONS)
@@ -295,7 +295,7 @@
 <Header bgcolor="#206095" bgfixed={true} theme="dark" center={false} short={true}>
 	<h1>Le recensement agricole de 1852</h1>
 	<p class="text-big" style="margin-top: 5px">
-		En 1852, la France est majoritairement rurale et agricole. L'exode rural et la densification urbaine viennent à peine de démarrer.  
+		En 1852, la France est rurale et agricole. L'exode rural et la densification urbaine viennent à peine de démarrer.  
 		Les disparités régionales sont importantes : "polyculture traditionnelle dans les régions de l'ouest, culture céréalière (plaines du Bassin parisien) ou encore culture du vignoble (Bordeaux, Bourgogne, Champagne)" <br/>
 		<i>Source : 
 			<a
@@ -337,19 +337,11 @@
 	</p>
 
 </Section>
-<!--
-<Media col="full" caption="Répartition des surfaces agricoles par espèce cultivée en 1852">
-	<div class="media" style="width: 100%;">
-		<img src="img/legende_treemap.png" alt="Légende du treemap" style="max-width: 25%; display: block; margin: 0 auto;">
-		<iframe width="80%" height="585" frameborder="0" title="Répartition des surfaces agricoles par espèce cultivée en 1852"
-  src="https://observablehq.com/embed/@francoissemecurbe/le-recensement-agricole-de-1852?cells=chart" style="margin-left: auto; margin-right: auto;"></iframe>
-	</div>
-</Media>
--->
+
 
 <Divider/>
 
-<Media caption="Répartition des surfaces agricoles par espèce cultivée en 1852" col="wide">
+<Media caption="Répartition des surfaces agricoles par espèce cultivée en 1852 !" col="wide">
 		<Treemap treemap_data={treemap_data} />
 </Media>
 

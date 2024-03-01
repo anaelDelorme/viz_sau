@@ -28,6 +28,6 @@ export const colors = {
 }
 
 export const units = {
-  'density': 'sq.km',
-  'age_med': 'years'
+  'nb_exp': 'exploitations',
+  'surf_2022': 'ha'
 }
