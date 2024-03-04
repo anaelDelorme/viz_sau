@@ -21,7 +21,7 @@
     width: 75px;
     border: none;
     border-top: 2px solid;
-    margin: 40px auto -10px auto;
+    margin: 40px auto 40px auto;
   }
 </style>
 

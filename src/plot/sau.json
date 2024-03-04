@@ -1,0 +1,57 @@
+[
+    
+    {
+        "annee": 1970,
+        "part_sau" :54.44526514,
+        "sau_m_ha" :18.8359803456579,
+        "sau_ha" :29904737,
+        "nbexpl_sup_100_ha":27113,
+        "nbexpl_moins_20_ha":920595,
+        "nbexpl_tot":1587639
+    },
+    {
+        "annee": 1979,
+        "part_sau" :53.70215402,
+        "sau_m_ha" :23.3604959019347,
+        "sau_ha" :29496574,
+        "nbexpl_sup_100_ha":34525,
+        "nbexpl_moins_20_ha":766733,
+        "nbexpl_tot":1262669
+    },
+    {
+        "annee": 1988,
+        "part_sau" :52.06217648,
+        "sau_m_ha" :28.1245688489361,
+        "sau_ha" :28595796,
+        "nbexpl_sup_100_ha":43699,
+        "nbexpl_moins_20_ha":556725,
+        "nbexpl_tot":1016755
+    },
+    {
+        "annee": 2000,
+        "part_sau" :50.71585639,
+        "sau_m_ha" :41.9644761203181,
+        "sau_ha" :27856313,
+        "nbexpl_sup_100_ha":78741,
+        "nbexpl_moins_20_ha":325111,
+        "nbexpl_tot":663807
+    },
+    {
+        "annee": 2010,
+        "part_sau" :49.08994135,
+        "sau_m_ha" :55.0296422076955,
+        "sau_ha" :26745875,
+        "nbexpl_sup_100_ha":93210,
+        "nbexpl_moins_20_ha":211406,
+        "nbexpl_tot":489977
+    },
+    {
+        "annee": 2020,
+        "part_sau" :48.69,
+        "sau_m_ha" :68.6180502284628,
+        "sau_ha" :29496574,
+        "nbexpl_sup_100_ha":100755,
+        "nbexpl_moins_20_ha":147063,
+        "nbexpl_tot":389779
+    }
+]
