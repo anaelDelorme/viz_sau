@@ -1,0 +1,51 @@
+[
+    {
+        "annee":1970,
+        "Plantes à fibres":40207,
+        "Plantes à parfum, aromatiques et médicinales":24319,
+        "Oléagineux": 377247,
+        "Protéagineux":0,
+        "Vigne":1205430
+    },
+    {
+        "annee":1979,
+        "Plantes à fibres":52324,
+        "Plantes à parfum, aromatiques et médicinales":28569,
+        "Oléagineux": 375800,
+        "Protéagineux":17808,
+        "Vigne":1092705
+    },
+    {
+        "annee":1988,
+        "Plantes à fibres":57747,
+        "Plantes à parfum, aromatiques et médicinales":21334,
+        "Oléagineux": 180102,
+        "Protéagineux":548040,
+        "Vigne":951550
+    },
+    {
+        "annee":2000,
+        "Plantes à fibres":60072,
+        "Plantes à parfum, aromatiques et médicinales":32965,
+        "Oléagineux": 1993211,
+        "Protéagineux":464424,
+        "Vigne":887206
+
+    },
+    {
+        "annee":2010,
+        "Plantes à fibres":63380,
+        "Plantes à parfum, aromatiques et médicinales":37978,
+        "Oléagineux": 2232680,
+        "Protéagineux":396605,
+        "Vigne":788620
+    },
+    {
+        "annee":2020,
+        "Plantes à fibres":158018,
+        "Plantes à parfum, aromatiques et médicinales":61778,
+        "Oléagineux": 2116840,
+        "Protéagineux":400922,
+        "Vigne":779891
+    }
+]

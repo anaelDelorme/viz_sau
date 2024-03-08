@@ -1,0 +1,32 @@
+[
+    {
+        "id": "chart00",
+        "text": "Les <Em color={'#5f86af'}>exploitations bovines</Em> sont en moyenne les plus vastes, devant celles orientées en <Em color={'#34cb6a'}>grandes cultures</Em>.",
+        "type_graph" : "bar",
+        "data_chart" : "otex_sau_moyen",
+        "title_graph" : "Surface moyenne des exploitations par spécialisation",
+        "name_series" : "Surface moyenne des exploitations par spécialisation",
+        "ykey" : "sau_m_ha",
+        "xkey" : "otex",
+        "unit" : " ha",
+        "nb_decimal" : 0,
+        "colors_chart" : ["#5f86af", "#34cb6a", "#999999", "#999999", "#999999", "#999999", "#999999", "#999999"],
+        "horizontal" : true,
+        "distributed" : true
+    },
+    {
+        "id": "chart01",
+        "text": "A l'opposé, <Em color={'#5f86af'}>viticulture, fruits, maraichage ou horticulture</Em> se déploient plutôt dans de petites surfaces.",
+        "type_graph" : "bar",
+        "data_chart" : "otex_sau_moyen",
+        "title_graph" : "Surface moyenne des exploitations par spécialisation",
+        "name_series" : "Surface moyenne des exploitations par spécialisation",
+        "ykey" : "sau_m_ha",
+        "xkey" : "otex",
+        "unit" : " ha",
+        "nb_decimal" : 0,
+        "colors_chart" : ["#999999", "#999999", "#999999", "#999999", "#999999", "#ffe552", "#ffe552", "#ffe552"],
+        "horizontal" : true,
+        "distributed" : true
+    }
+  ]

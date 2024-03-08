@@ -1,0 +1,42 @@
+[
+    
+    {
+        "otex": "Élevage de bovins",
+        "sau_m_ha" : 93.2
+    },
+    {
+        "otex": "Grandes cultures",
+        "sau_m_ha" : 82.5
+
+    },
+    {
+        "otex": "Polyculture et polyélevage",
+        "sau_m_ha" : 80.6
+
+    },
+    {
+        "otex": "Elevage de porcins, volailles",
+        "sau_m_ha" : 52.3
+
+    },
+    {
+        "otex": "Elevage d'ovins, autres herbivores",
+        "sau_m_ha" : 48.8
+
+    },
+    {
+        "otex": "Viticulture",
+        "sau_m_ha" : 18.7
+
+    },
+    {
+        "otex": "Fruits",
+        "sau_m_ha" : 17.6
+
+    },
+    {
+        "otex": "Maraichage, horticulture",
+        "sau_m_ha" : 10.5
+
+    }
+]

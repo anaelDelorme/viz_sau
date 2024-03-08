@@ -1,0 +1,35 @@
+[
+    {
+        "cultures": "Céréales",
+        "evol_sau_ha_2010_2020" :-299743
+    },
+    {
+        "cultures": "Oléagineux",
+        "evol_sau_ha_2010_2020" :-115840
+    },
+    {
+        "cultures": "Vignes",
+        "evol_sau_ha_2010_2020" :-8729
+    },
+    {
+        "cultures": "Fruits",
+        "evol_sau_ha_2010_2020" :17651
+    },
+    {
+        "cultures": "Plantes à parfum, aromatiques",
+        "evol_sau_ha_2010_2020" :23800
+    },
+    {
+        "cultures": "Légumes",
+        "evol_sau_ha_2010_2020" :39926
+    },
+    {
+        "cultures": "Plantes à fibres",
+        "evol_sau_ha_2010_2020" :94638
+    },
+    {
+        "cultures": "Fourrages et superficie toujours en herbe",
+        "evol_sau_ha_2010_2020" :106724
+    }
+
+]

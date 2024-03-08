@@ -2,7 +2,7 @@
   import ApexCharts from 'apexcharts';
   import { onMount, onDestroy } from 'svelte';
  
-  
+
   export let animate = true;
   
   export let data;
@@ -18,6 +18,8 @@
   export let ykey;
   export let horizontal = false;
   export let distributed = false;
+  export let unit_total_donut = "kk";
+  export let nb_decimal_total_donut = 0;
   let el; // Chart DOM element
 
   //console.log(ykey);
@@ -68,7 +70,52 @@
           bar: {
             horizontal: horizontal,
             distributed: distributed,
-          }
+          },
+          pie:{
+            donut: {
+            size: '50%',
+            background: 'transparent',
+            labels: {
+              show: true,
+              name: {
+                show: true,
+                fontSize: '22px',
+                fontFamily: 'Helvetica, Arial, sans-serif',
+                fontWeight: 600,
+                color: undefined,
+                offsetY: -10,
+                formatter: function (val) {
+                  return val
+                }
+              },
+              value: {
+                show: true,
+                fontSize: '18px',
+                fontFamily: 'Helvetica, Arial, sans-serif',
+                fontWeight: 400,
+                color: undefined,
+                offsetY: 16,
+                formatter: function (val) {
+                  return val.toFixed(nb_decimal_total_donut) + unit_total_donut;
+                }
+              },
+              total: {
+                show: true,
+                showAlways: true,
+                label: 'Total',
+                fontSize: '22px',
+                fontFamily: 'Helvetica, Arial, sans-serif',
+                fontWeight: 600,
+                color: '#373d3f',
+                formatter: function (w) {
+                  return w.globals.seriesTotals.reduce((a, b) => {
+                    return a + b
+                  }, 0)
+                }
+              }
+            }
+            }
+          }     
         },
 
     markers: {
