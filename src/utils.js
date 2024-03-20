@@ -16,8 +16,12 @@ export function getMotion() {
 // DEMO-SPECIFIC FUNCTIONS
 export async function getData(url) {
   let response = await fetch(url);
+ // console.log("response : ",response);
   let string = await response.text();
+ // console.log("string : ",string);
+
 	let data = await csvParse(string, autoType);
+ // console.log("data : ",data);
   return data;
 }
 
@@ -47,10 +51,10 @@ export function getBreaks(vals) {
 	let len = vals.length;
 	let breaks = [
 		vals[0],
-		vals[Math.floor(len * 0.2)],
-		vals[Math.floor(len * 0.4)],
+		vals[Math.floor(len * 0.15)],
+		vals[Math.floor(len * 0.35)],
+		vals[Math.floor(len * 0.48)],
 		vals[Math.floor(len * 0.6)],
-		vals[Math.floor(len * 0.8)],
 		vals[len - 1]
 	];
 	return breaks;

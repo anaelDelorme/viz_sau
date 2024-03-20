@@ -2,7 +2,7 @@
 	// CORE IMPORTS
 	import { setContext } from "svelte";
 	import { tooltip } from "@svelte-plugins/tooltips";
-	import { themes } from "./config.js";
+	import { themes, colors } from "./config.js";
 	import ONSHeader from "./layout/ONSHeader.svelte";
 	import ONSFooter from "./layout/ONSFooter.svelte";
 	import Header from "./layout/Header.svelte";
@@ -13,8 +13,9 @@
 	import Arrow from "./ui/Arrow.svelte";
 	import Em from "./ui/Em.svelte";
 	import ScrollerGraph from "./layout/ScrollerGraph.svelte";
+	import { Map, MapSource, MapLayer, MapTooltip } from "@onsvisual/svelte-maps";
 
-
+	import { getData, setColors, getTopo, getBreaks, getColor } from "./utils.js";
 	import Apexcharts from "./layout/creer_apexchart.svelte";
 	import sau from "./plot/sau.json";
 	import nb_exploit from "./plot/nb_exploitation.json";
@@ -26,6 +27,38 @@
 	import chartsConfig_01_json from './plot/chartsConfig_01.json';
 	import chartsConfig_02_json from './plot/chartsConfig_02.json';
 	import chartsConfig_03_json from './plot/chartsConfig_03.json';
+
+	import topojsonFR from "./plot/dep2021.json";
+	function convertToGeoJSON(jsonData) {
+		console.log(jsonData)
+		if (!jsonData || !jsonData.features || !Array.isArray(jsonData.features)) {
+			console.error('Invalid JSON data. Unable to convert to GeoJSON.');
+			return null; // ou une valeur par défaut appropriée selon votre cas
+		}
+
+		const features = jsonData.features.map(feature => ({
+			type: 'Feature',
+			geometry: feature.geometry,
+			properties: feature.properties // Si des propriétés sont présentes dans le JSON, vous pouvez les ajouter ici
+		}));
+
+		return {
+			type: 'FeatureCollection',
+			features: features
+		};
+	}
+
+	// Convertir le JSON en GeoJSON
+	const geojsonFR = convertToGeoJSON(topojsonFR);
+
+	const mapstyle = "https://bothness.github.io/ons-basemaps/data/style-omt.json";
+	const mapbounds = {
+		fr: [
+			[-5.1, 51.1 ], 
+			[9.6, 41.3 ]  
+		] 
+	};
+
 
 	const dataSets = {
 		nb_exploit,
@@ -47,9 +80,6 @@
 		data_chart: dataSets[config.data_chart],
 	}));
 	
-	import {
-		setColors,
-	} from "./utils.js";
 	
 	// Set theme globally (options are 'light', 'dark' or 'lightblue')
 	let theme = "light";
@@ -64,6 +94,148 @@
 	let color_chart_evolution_sau = ["#D41501","#FF5443","#FF9E93", "#86E8A7", "#58D983", "#35CB68", "#13C04E", "#009B35" ];
 	let horizontal_chart_evolution_sau = true;
 	let distributed_chart_evolution_sau = true;
+
+
+
+//Carto
+// Element bindings
+let map = null; // Bound to mapbox 'map' instance once initialised
+
+// State
+let hovered; // Hovered departement (chart or map)
+let selected; // Selected departement (chart or map)
+$: region = selected && metadata.departement.lookup ? metadata.departement.lookup[selected].parent : null; // Gets region code for 'selected'
+let mapHighlighted = []; // Highlighted departement (map only)
+let choix = 'tous'; // rKey (radius) for scatter chart
+let mapKey = "nb_exp"; // Key for data to be displayed on map
+let explore = false; // Allows chart/map interactivity to be toggled on/off
+
+// FUNCTIONS (INCL. SCROLLER ACTIONS)
+
+// Functions for chart and map on:select and on:hover events
+function doSelect(e) {
+	console.log(e);
+	selected = e.detail.id;
+	if (e.detail.feature) fitById(selected); // Fit map if select event comes from map
+}
+function doHover(e) {
+	hovered = e.detail.id;
+}
+
+// Functions for map component
+function fitBounds(bounds) {
+	if (map) {
+		map.fitBounds(bounds, {animate: animation, padding: 30});
+	}
+}
+function fitById(id) {
+	if (geojsonFR && id) {
+		let feature = geojsonFR.features.find(d => d.properties.code == id);
+		let bounds = bbox(feature.geometry);
+		fitBounds(bounds);
+	}
+}
+
+let data = {departement: {}, region: {}};
+let metadata = {departement: {}, region: {}};
+
+const actions = {
+		map: { 
+			map01: () => { 
+				fitBounds(mapbounds.fr);
+				mapKey = "nb_exp";
+				mapHighlighted = [];
+				explore = false;
+			},
+			map02: () => {
+				let hl = [...data.departement.indicators].sort((a, b) => b.surf_2022 - a.surf_2022)[0];
+				fitById(hl.code);
+				mapKey = "surf_2022";
+				mapHighlighted = [hl.code];
+				explore = false;
+			},
+			map03: () => {
+				let hl = [...data.departement.indicators].sort((a, b) => b.surf_2022 - a.surf_2022)[0];
+				fitById(hl.code);
+				mapKey = "surf_2022";
+				mapHighlighted = [hl.code];
+				explore = false;
+			},
+			map04: () => {
+				let hl = [...data.departement.indicators].sort((a, b) => b.surf_2022 - a.surf_2022)[0];
+				fitById(hl.code);
+				mapKey = "surf_2022";
+				mapHighlighted = [hl.code];
+				explore = false;
+			}
+		}
+	}
+
+	function runActions(codes = []) {
+		
+		codes.forEach(code => {
+			if (id[code] != idPrev[code]) {
+				if (actions[code][id[code]]) {
+					actions[code][id[code]]();
+					
+				}
+				idPrev[code] = id[code];
+			}
+		});
+	}
+
+	//$: id && runActions(Object.keys(actions));	
+	let filteredData ="";
+	getData(`./data/evol_sau.csv`)
+		.then(arr => {
+			let meta = arr.map(d => ({
+				code: d.departement,
+				//name: d.name,
+				parent: d.parent ? d.parent : null
+			}));
+			let lookup = {};
+			meta.forEach(d => {
+				lookup[d.code] = d;
+			});
+			metadata["departement"].array = meta;
+			metadata["departement"].lookup = lookup;
+		
+		//console.log("metadata", metadata)
+
+			let indicators = arr.map((d, i) => ({
+				...meta[i],
+				annee: d.annee,
+				sau: d['sau'],
+				part_sau: d['part_sau'],
+				sau_m_ha: d['sau_m_ha'],
+				nb_exp: d.exploitations
+			}));
+			//console.log("indicators", indicators)
+			filteredData = indicators.filter(d => d.annee === 2020);
+
+					// Trier filteredData par part_sau
+			filteredData.sort((a, b) => a.part_sau - b.part_sau);
+
+			// Extraire les valeurs de part_sau dans un tableau
+			const partSauValues = filteredData.map(d => d.part_sau);
+
+			// Calculer les limites de chaque classe à l'aide de getBreaks
+			const classLimits = getBreaks(partSauValues);
+
+			// Associer une couleur à chaque ligne de filteredData
+			filteredData.forEach((d) => {
+				// Trouver l'index de la classe correspondante dans colors.seq
+				const classIndex = classLimits.findIndex((limit) => d.part_sau < limit);
+				// Associer la couleur correspondante à la ligne
+				d.color = colors.seq[classIndex];
+			});
+
+			//console.log("filteredData: ", filteredData)
+			 
+			
+
+		});
+
 </script>
 
 <ONSHeader filled={true} center={false} />
@@ -251,7 +423,57 @@ use:tooltip={{ theme: "custom-tooltip" }}
 
 			<ScrollerGraph chartsConfig={chartsConfig_03} />
 
+	<Section theme="lightblue">
+		<p>Part de la superficie agricole utilisée en 2020 dans la superficie totale (en %)
+		</p>
+		<figure>
+			<div class="col-full height-full">
+					<Map style={mapstyle} interactive={false} location={{bounds: mapbounds.fr}}>
 
+					<MapSource
+					  id="lad"
+					  type="geojson"
+					  data={geojsonFR}
+					  promoteId="code"
+					  maxzoom={13}>
+					<MapLayer
+					  	id="lad-fill"
+						idKey="code"
+						colorKey="color"
+					  	data={filteredData}
+					  	type="fill"
+							select {selected} on:select={doSelect} clickIgnore={!explore}
+							hover {hovered} on:hover={doHover}
+							highlight highlighted={mapHighlighted}
+					  	paint={{
+					  		'fill-color': ['case',
+					  			['!=', ['feature-state', 'color'], null], ['feature-state', 'color'],
+					  			'rgba(255, 255, 255, 0)'
+					  		],
+					  		'fill-opacity': 0.7
+					  	}}>
+							<!--	<MapTooltip content={
+									hovered ? `${metadata.departement.lookup[hovered].code}<br/><strong>${data.departement.indicators.find(d => d.code == hovered)[mapKey].toLocaleString()} ${units[mapKey]}</strong>` : ''
+								}/>-->
+							</MapLayer>
+						<MapLayer
+					  	id="lad-line"
+					  	type="line"
+					  	paint={{
+					  		'line-color': ['case',
+					  			['==', ['feature-state', 'hovered'], true], 'orange',
+					  			['==', ['feature-state', 'selected'], true], 'black',
+					  			['==', ['feature-state', 'highlighted'], true], 'black',
+					  			'rgba(255,255,255,0)'
+					  		],
+					  		'line-width': 2
+					  	}}
+				    />
+				  </MapSource>
+				</Map>
+			</div>
+		</figure>
+	</Section>
 
 
 <ONSFooter />
