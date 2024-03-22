@@ -17,7 +17,7 @@
     let scrollerId = '';
 
     let currentConfig = chartsConfig[0];
-    let previousConfig = chartsConfig[0];
+    
  // Code to run Scroller actions when new caption IDs come into view
  function runActions(id_select) {
   if (typeof id_select !== 'string') {
@@ -26,9 +26,8 @@
     var configObject = chartsConfig.find(function(item) {
       return item.id === id_select;
     });
-    if (currentConfig !== previousConfig) {
+    if (currentConfig !== configObject) {
       currentConfig = configObject;
-      previousConfig = configObject;
     }
   }
 };
