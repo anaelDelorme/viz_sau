@@ -1,6 +1,6 @@
 <script>
 	// CORE IMPORTS
-	import { setContext } from "svelte";
+	import { setContext, onMount  } from "svelte";
 	import { tooltip } from "@svelte-plugins/tooltips";
 	import { themes, colors } from "./config.js";
 	import ONSHeader from "./layout/ONSHeader.svelte";
@@ -14,6 +14,8 @@
 	import Em from "./ui/Em.svelte";
 	import ScrollerGraph from "./layout/ScrollerGraph.svelte";
 	import { Map, MapSource, MapLayer, MapTooltip } from "@onsvisual/svelte-maps";
+    import Scroller from './layout/Scroller.svelte';
+	import bbox from "@turf/bbox";
 
 	import { getData, setColors, getTopo, getBreaks, getColor } from "./utils.js";
 	import Apexcharts from "./layout/creer_apexchart.svelte";
@@ -28,9 +30,9 @@
 	import chartsConfig_02_json from './plot/chartsConfig_02.json';
 	import chartsConfig_03_json from './plot/chartsConfig_03.json';
 
-	import topojsonFR from "./plot/dep2021.json";
+	import topojsonFR from "./plot/a-dep2021.json";
 	function convertToGeoJSON(jsonData) {
-		console.log(jsonData)
+		//console.log(jsonData)
 		if (!jsonData || !jsonData.features || !Array.isArray(jsonData.features)) {
 			console.error('Invalid JSON data. Unable to convert to GeoJSON.');
 			return null; // ou une valeur par défaut appropriée selon votre cas
@@ -51,7 +53,6 @@
 	// Convertir le JSON en GeoJSON
 	const geojsonFR = convertToGeoJSON(topojsonFR);
 
-	const mapstyle = "https://bothness.github.io/ons-basemaps/data/style-omt.json";
 	const mapbounds = {
 		fr: [
 			[-5.1, 51.1 ], 
@@ -85,11 +86,16 @@
 	let theme = "light";
 	setContext("theme", theme);
 	setColors(themes, theme);
-
+	let id = {}; // Object to hold visible section IDs of Scroller components
+	let idPrev = {}; // Object to keep track of previous IDs, to compare for changes
+	onMount(() => {
+		idPrev = {...id};
+	});
 	let animation = true;
 	let horizontal_graph1 = false;
 	let distributed_graph1 = false;
 	let colors_sau_moyenne = ["#34cb6a", "#FFF"];
+	const threshold = 0.65;
 
 	let color_chart_evolution_sau = ["#D41501","#FF5443","#FF9E93", "#86E8A7", "#58D983", "#35CB68", "#13C04E", "#009B35" ];
 	let horizontal_chart_evolution_sau = true;
@@ -114,12 +120,12 @@ let explore = false; // Allows chart/map interactivity to be toggled on/off
 
 // Functions for chart and map on:select and on:hover events
 function doSelect(e) {
-	console.log(e);
-	selected = e.detail.id;
+    selected = e.detail.id; 
 	if (e.detail.feature) fitById(selected); // Fit map if select event comes from map
 }
 function doHover(e) {
-	hovered = e.detail.id;
+	hovered = e.detail.id; 
+	
 }
 
 // Functions for map component
@@ -129,9 +135,15 @@ function fitBounds(bounds) {
 	}
 }
 function fitById(id) {
+	console.log("ID: " + id);
+		console.log("geojsonFR: " + geojsonFR);
+
 	if (geojsonFR && id) {
-		let feature = geojsonFR.features.find(d => d.properties.code == id);
+
+		let feature = geojsonFR.features.find(d => d.properties.dep == id);
+		console.log("feature: " + feature);
 		let bounds = bbox(feature.geometry);
+			console.log("bounds: " + bounds);
 		fitBounds(bounds);
 	}
 }
@@ -143,36 +155,53 @@ const actions = {
 		map: { 
 			map01: () => { 
 				fitBounds(mapbounds.fr);
-				mapKey = "nb_exp";
+				mapKey = "part_sau";
 				mapHighlighted = [];
 				explore = false;
 			},
 			map02: () => {
-				let hl = [...data.departement.indicators].sort((a, b) => b.surf_2022 - a.surf_2022)[0];
-				fitById(hl.code);
-				mapKey = "surf_2022";
-				mapHighlighted = [hl.code];
+				fitById("33");
+				mapHighlighted = [];
 				explore = false;
 			},
+
 			map03: () => {
-				let hl = [...data.departement.indicators].sort((a, b) => b.surf_2022 - a.surf_2022)[0];
-				fitById(hl.code);
-				mapKey = "surf_2022";
-				mapHighlighted = [hl.code];
+				fitById("06");
+				mapHighlighted = [];
 				explore = false;
 			},
+
 			map04: () => {
-				let hl = [...data.departement.indicators].sort((a, b) => b.surf_2022 - a.surf_2022)[0];
-				fitById(hl.code);
-				mapKey = "surf_2022";
-				mapHighlighted = [hl.code];
+				fitById("973");
+				mapHighlighted = [];
+				explore = false;
+			},
+
+		},
+		map2: { 
+			map201: () => { 
+				fitBounds(mapbounds.fr);
+				mapKey = "sau_m_ha";
+				mapHighlighted = [];
+				explore = false;
+			},
+			map202: () => {
+				fitById("83");
+				mapHighlighted = [];
+				explore = false;
+			},
+
+			map203: () => {
+				fitById("976");
+				mapHighlighted = [];
 				explore = false;
 			}
+
 		}
 	}
 
 	function runActions(codes = []) {
-		
+		console.log("ACTION",codes);
 		codes.forEach(code => {
 			if (id[code] != idPrev[code]) {
 				if (actions[code][id[code]]) {
@@ -184,8 +213,10 @@ const actions = {
 		});
 	}
 
-	//$: id && runActions(Object.keys(actions));	
+	$: id && runActions(Object.keys(actions));	
 	let filteredData ="";
+	let filteredData2 ="";
+
 	getData(`./data/evol_sau.csv`)
 		.then(arr => {
 			let meta = arr.map(d => ({
@@ -213,6 +244,8 @@ const actions = {
 			//console.log("indicators", indicators)
 			filteredData = indicators.filter(d => d.annee === 2020);
 
+		
+
 					// Trier filteredData par part_sau
 			filteredData.sort((a, b) => a.part_sau - b.part_sau);
 
@@ -227,10 +260,11 @@ const actions = {
 				// Trouver l'index de la classe correspondante dans colors.seq
 				const classIndex = classLimits.findIndex((limit) => d.part_sau < limit);
 				// Associer la couleur correspondante à la ligne
-				d.color = colors.seq[classIndex];
+				d.color = colors.greenSeq[classIndex];
 			});
 
-			//console.log("filteredData: ", filteredData)
+			console.log("filteredData: ", filteredData)
+			
 			 
 			
 
@@ -339,8 +373,10 @@ const actions = {
 				caption="SAU moyenne en métropole, en ha"
 				col="wide"
 				theme="lightblue"
+				class="#grid-wide"
 			>
 				<Apexcharts
+					wodth="200px"
 					type_graph="donut"
 					data={otex_sau}
 					name_series="SAU par OTEX"
@@ -423,20 +459,23 @@ use:tooltip={{ theme: "custom-tooltip" }}
 
 			<ScrollerGraph chartsConfig={chartsConfig_03} />
 
-	<Section theme="lightblue">
-		<p>Part de la superficie agricole utilisée en 2020 dans la superficie totale (en %)
-		</p>
+<Scroller {threshold} bind:id={id['map']} >
+	<div slot="background" style="background-color:#bccfde">
+	
 		<figure>
+			
 			<div class="col-full height-full">
-					<Map style={mapstyle} interactive={false} location={{bounds: mapbounds.fr}}>
+				<caption clas>Part de la superficie agricole utilisée en 2020 dans la superficie totale (en %)
+		</caption>
+					<Map style={"mapbox://styles/anaeldelorme/clu19lio500vi01p7dbd4eo4a"} bind:map interactive={false} location={{bounds: mapbounds.fr}}>
 
 					<MapSource
 					  id="lad"
 					  type="geojson"
 					  data={geojsonFR}
-					  promoteId="code"
+					  promoteId="dep"
 					  maxzoom={13}>
-					<MapLayer
+					  <MapLayer
 					  	id="lad-fill"
 						idKey="code"
 						colorKey="color"
@@ -450,11 +489,11 @@ use:tooltip={{ theme: "custom-tooltip" }}
 					  			['!=', ['feature-state', 'color'], null], ['feature-state', 'color'],
 					  			'rgba(255, 255, 255, 0)'
 					  		],
-					  		'fill-opacity': 0.7
+					  		'fill-opacity': 1
 					  	}}>
-							<!--	<MapTooltip content={
-									hovered ? `${metadata.departement.lookup[hovered].code}<br/><strong>${data.departement.indicators.find(d => d.code == hovered)[mapKey].toLocaleString()} ${units[mapKey]}</strong>` : ''
-								}/>-->
+								<MapTooltip content={
+					hovered ? `${filteredData.find(d => d.code == hovered)?.code}<br/>Part de la SAU : ${filteredData.find(d => d.code == hovered)?.part_sau} %` : ''
+				}/>
 							</MapLayer>
 						<MapLayer
 					  	id="lad-line"
@@ -464,16 +503,52 @@ use:tooltip={{ theme: "custom-tooltip" }}
 					  			['==', ['feature-state', 'hovered'], true], 'orange',
 					  			['==', ['feature-state', 'selected'], true], 'black',
 					  			['==', ['feature-state', 'highlighted'], true], 'black',
-					  			'rgba(255,255,255,0)'
+					  			'white'
 					  		],
-					  		'line-width': 2
+					  		'line-width': ['case',
+					  			['==', ['feature-state', 'hovered'], true], 1.5,
+					  			['==', ['feature-state', 'selected'], true], 1.5,
+					  			['==', ['feature-state', 'highlighted'], true], 1.5,
+					  			.01]
 					  	}}
 				    />
 				  </MapSource>
 				</Map>
 			</div>
 		</figure>
-	</Section>
+	</div>
+
+	<div slot="foreground">
+		<section data-id="map01">
+			<div class="col-medium dark-bg white-text">
+				<p>
+L'emprise de l'agriculture s'affirme davantage dans le quart nord-ouest de la métropole. Elle atteint son maximum en <Em color={"#0a5039"}>Eure-et-Loir</Em> où 75 % du territoire est dédié à l'agriculture. Isolé au sein du Sud-Ouest, le <Em color={"#0a5039"}>Gers</Em> affiche 71 %.				</p>
+			</div>
+		</section>
+		<section data-id="map02" >
+			<div class="col-medium dark-bg white-text">
+				<p>
+					À l'opposé, dans le Sud-Est et dans les <Em color={"#00a95f"}>Landes</Em> ou la <Em color={"#00a95f"}>Gironde</Em>, ce sont plutôt des forêts, montagnes ou zones humides.
+
+</p>
+			</div>
+		</section>
+		<section data-id="map03" >
+			<div class="col-medium  dark-bg white-text">
+				<p>La part de SAU la plus faible de province est dans le département des <Em color={"#81dfa2"}>Alpes-Maritimes</Em> (10 %).
+</p>
+			</div>
+		</section>
+		<section data-id="map04" >
+			<div class="col-medium dark-bg white-text">
+<p>Outre-mer, la <Em color={"#81dfa2"}>Guyane</Em> se distingue encore plus fortement (0,4 %).
+</p>			</div>
+		</section>
+
+	</div>
+</Scroller>
+
+
 
 
 <ONSFooter />
@@ -522,4 +597,19 @@ use:tooltip={{ theme: "custom-tooltip" }}
 		--tooltip-color: black;
 		--tooltip-font-size: 16px;
 	}
+
+   .dark-bg {
+        background-color: #333; /* Couleur gris foncé */
+    }
+
+    .white-text {
+        color: #fff; /* Texte en blanc */
+    }
+	.em-primary {
+          padding: 1px 4px 1px 4px;
+          font-weight: bold;
+		  white-space: nowrap;
+		  background-color: pink;
+  			color: white;
+      }
 </style>

@@ -1,7 +1,7 @@
 [
     {
         "id": "chart00",
-        "text": "Les <Em color={'#5f86af'}>exploitations bovines</Em> sont en moyenne les plus vastes, devant celles orientées en <Em color={'#34cb6a'}>grandes cultures</Em>.",
+        "text": "Les  <span style='padding: 1px 4px; font-weight: bold; white-space: nowrap; background-color: steelblue; color: white;'>exploitations bovines</span> sont en moyenne les plus vastes, devant celles orientées en <span style='padding: 1px 4px; font-weight: bold; white-space: nowrap; background-color: mediumseagreen; color: white;'>grandes cultures</span>.",
         "type_graph" : "bar",
         "data_chart" : "otex_sau_moyen",
         "title_graph" : "Surface moyenne des exploitations par spécialisation",
@@ -16,7 +16,7 @@
     },
     {
         "id": "chart01",
-        "text": "A l'opposé, <Em color={'#5f86af'}>viticulture, fruits, maraichage ou horticulture</Em> se déploient plutôt dans de petites surfaces.",
+        "text": "A l'opposé, <span style='padding: 1px 4px; font-weight: bold; white-space: nowrap; background-color: khaki; color: black;'>viticulture, fruits, maraichage ou horticulture</span> se déploient plutôt dans de petites surfaces.",
         "type_graph" : "bar",
         "data_chart" : "otex_sau_moyen",
         "title_graph" : "Surface moyenne des exploitations par spécialisation",

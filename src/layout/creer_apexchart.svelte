@@ -48,7 +48,7 @@
         };
     });
     }
-    console.log("series_data : "+ series_data)
+   // console.log("series_data : "+ series_data)
 
     let options_return = {
     chart: {
@@ -56,10 +56,10 @@
       dropShadow: {
         enabled: true,
         color: "#000",
-        top: 18,
-        left: 7,
-        blur: 5,
-        opacity: 0.2,
+        top: 5,
+        left: 3,
+        blur: 2,
+        opacity: 0.1,
       },
       toolbar: {
         show: false,
@@ -202,7 +202,6 @@
 </script>
 
 <div bind:this={el}>
-  <h2> </h2>
   <div class="container" bind:this={ref} />
 </div>
 

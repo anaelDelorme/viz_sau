@@ -49,13 +49,14 @@ export function getColor(value, breaks, colors) {
 
 export function getBreaks(vals) {
 	let len = vals.length;
+	let filteredVals = vals.filter(val => val !== "NA" && Number.isFinite(val)); // Filtrer les valeurs "NA" et NaN
 	let breaks = [
 		vals[0],
 		vals[Math.floor(len * 0.15)],
 		vals[Math.floor(len * 0.35)],
 		vals[Math.floor(len * 0.48)],
 		vals[Math.floor(len * 0.6)],
-		vals[len - 1]
+		filteredVals.length > 0 ? Math.max(...filteredVals)+1 : null // Utiliser le maximum des valeurs filtrées ou null si aucune valeur valide
 	];
 	return breaks;
 }

@@ -1,7 +1,7 @@
 [
     {
         "id": "chart00",
-        "text": "Le nombre d'exploitations de <Em color={'#5f86af'}>moins de 100 ha</Em> recule tandis que celui des plus grandes augmente. Pour autant, <b>les exploitations de moins de 50 ha sont toujours majoritaires</b> (54 % en 2020).",
+        "text": "Le nombre d'exploitations de <span style='padding: 1px 4px; font-weight: bold; white-space: nowrap; background-color: steelblue; color: white;'>moins de 100 ha</span> recule tandis que celui des plus grandes augmente. Pour autant, <b>les exploitations de moins de 50 ha sont toujours majoritaires</b> (54 % en 2020).",
         "type_graph" : "bar",
         "data_chart" : "nb_exploit",
         "title_graph" : "Nombre d'exploitations par classe de SAU",
@@ -16,7 +16,7 @@
     },
     {
         "id": "chart01",
-        "text" : "Les <Em color={'#34cb6a'}>exploitations de moins de 20 ha</Em> concentrent les 2/3 de la diminution totale.",
+        "text" : "Les <span style='padding: 1px 4px; font-weight: bold; white-space: nowrap; background-color: mediumseagreen; color: white;'>exploitations de moins de 20 ha</span> concentrent les 2/3 de la diminution totale.",
         "type_graph" : "bar",
         "data_chart" : "nb_exploit",
         "title_graph" : "Nombre d'exploitations par classe de SAU",
@@ -25,15 +25,13 @@
         "xkey" : "taille",
         "unit" : "",
         "nb_decimal" : 0,
-        "colors_chart" : [
-            "#34cb6a",
+        "colors_chart" :
+           [
             "#999999",
-            "#999999",
-            "#999999",
-            "#999999"
+            "#d9d9d9"
         ],
         "horizontal" : true,
-        "distributed" : true
+        "distributed" : false
     },
     {
         "id": "chart02",
@@ -53,7 +51,7 @@
     },
     {
         "id": "chart03",
-        "text" : "A l'opposé, le nombre d'exploitations de <Em color={'#34cb6a'}>plus de 200 ha</Em> augmente d'un tiers entre 2010 et 2020.",
+        "text" : "A l'opposé, le nombre d'exploitations de <span style='padding: 1px 4px; font-weight: bold; white-space: nowrap; background-color: mediumseagreen; color: white;'>plus de 200 ha</span> augmente d'un tiers entre 2010 et 2020.",
         "type_graph" : "bar",
         "data_chart" : "nb_exploit",
         "title_graph" : "Nombre d'exploitations par classe de SAU",
@@ -64,13 +62,10 @@
         "nb_decimal" : 0,
         "colors_chart" : [
             "#999999",
-            "#999999",
-            "#999999",
-            "#999999",
-            "#34cb6a"
+            "#d9d9d9"
         ],
         "horizontal" : true,
-        "distributed" : true
+        "distributed" : false
     },
     {   
         "id": "chart04",

@@ -122,6 +122,8 @@
 		display: grid;
 		grid-template-columns: repeat(auto-fill, 100%);
 		margin: 40px 0 0 0;
+		/*height: 100px;*/
+
 	}
 	.grid-narrow {
 		grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)) !important;
