@@ -19,7 +19,8 @@
     let currentConfig = chartsConfig[0];
     
  // Code to run Scroller actions when new caption IDs come into view
- function runActions(id_select) {
+ function runActionsScroller(id_select) {
+  console.log("runActionsScroller", id_select);
   if (typeof id_select !== 'string') {
   } else {
 
@@ -32,7 +33,7 @@
   }
 };
 
-  $: id && runActions(id); // Run above code when 'id' object changes
+  $: id && runActionsScroller(id); // Run above code when 'id' object changes
   onMount(() => {
       scrollerId = chartsConfig[0].id;
     });
