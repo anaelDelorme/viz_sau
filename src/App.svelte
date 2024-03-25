@@ -16,7 +16,6 @@
 	import { Map, MapSource, MapLayer, MapTooltip } from "@onsvisual/svelte-maps";
     import Scroller from './layout/Scroller.svelte';
 	import bbox from "@turf/bbox";
-
 	import { getData, setColors, getTopo, getBreaks, getColor } from "./utils.js";
 	import Apexcharts from "./layout/creer_apexchart.svelte";
 	import sau from "./plot/sau.json";
@@ -286,7 +285,7 @@ const actions = {
 		En 2020, l’agriculture occupe 269 000 km2 de l’espace français. En <u
 			title="En Guyane, dont la superficie est le sixième de la métropole, l'agriculture n'utilise que 0,4 % du territoire."
 			use:tooltip={{ theme: "custom-tooltip" }}>métropole</u
-		>, cela représente <Em color={"#ffe552"}>49 % du territoire</Em>. Alors
+		>, cela représente <Em color={"#ffe552"}>49 % du territoire </Em>. Alors
 		qu'elle <b>diminue régulièrement depuis 50 ans</b>, la
 		<u
 			title="La SAU comprend les terres arables (y compris pâturages temporaires, jachères, cultures sous abri, jardins familiaux...), les surfaces toujours en herbe et les cultures permanentes (vignes, vergers...)."
